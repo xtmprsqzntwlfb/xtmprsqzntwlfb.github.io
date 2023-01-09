@@ -1,0 +1,327 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Page setup -->
+    <meta charset="utf-8">
+    <title>Notes and thoughts</title>
+    <meta name="description" content="Notes on AngularJS">
+    <meta name="author" content="xtmprsqzntwlfb">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link rel="icon" type="image/png" href="favicon.png">
+  
+    <!-- Stylesheets -->
+    <!-- Reset default styles and add support for google fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet" type="text/css" />
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+   
+    <!-- Custom styles -->
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>    
+
+   
+  </head>
+  
+  <body>
+
+    <header id="header">
+      <img src="logo.png">
+      <h1>Notes and thoughts</h1>
+      
+      <!-- Menu link fragment #id should match a div id. Example: <a href="#home"> links to <div id="home"></div>  -->
+      <ul class="main-menu">
+        <li><a href="#home">home</a></li>
+        <li><a href="#about">about</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>                 
+    </header>
+   
+    <div id="container">
+      <div class="inner">
+        <div id="content"> 
+          
+          <div id="home" class="content-region hide">
+            <h2>Fun with OpenStack Horizon. Migration from AngularJS 1.5.8 to 1.8.2</h2>
+            <p>
+              It has been a while since OpenStack Horizon succesfully survived a migration to a newer version of AngularJS, so the next migration was inevitable. I am going to mark a few key notes on this process.
+            </p>
+            <h3>Is there a fast and easy way to migrate AngularJS project?</h3>
+            <p>
+              No.
+            </p>
+
+            <h3>The official changelog</h3>
+            <p>
+              However AngularJS has the official <a href="https://github.com/angular/angular.js/blob/master/CHANGELOG.md">CHANGELOG</a> to have some ideas what to do with tons of errors appeared after switching to the new version. 
+            </p>
+            <h3>$cookies</h3>
+            <p>
+              Several deprecated features have been removed. We have been using the deprecated <code>$cookieStore</code> service from the <code>ngCookies</code> module, so it had to be switched to <code>$cookies</code> from the same module:
+            </p>
+            <pre>
+// Before:
+$cookieStore.put('name', {key: 'value'});
+$cookieStore.get('name');
+$cookieStore.remove('name');
+
+// After:
+$cookies.putObject('name', {key: 'value'});
+$cookies.getObject('name');
+$cookies.remove('name');
+            </pre>
+            
+            <h3>$resource</h3>
+            <p>
+              Callbacks <code>success</code> and <code>error</code> (with or without response interceptors), have been changed, so that throwing an error inside the callbacks will not propagate to the returned <code>$promise</code>:
+            </p>
+            <pre>
+// Avoid:
+User.query(function onSuccess(users) { throw new Error(); }).
+  $promise.
+  catch(function onError() { /* Will not be called. */ });
+
+// Prefer:
+User.query().
+  $promise.
+  then(function onSuccess(users) { throw new Error(); }).
+  catch(function onError() { /* Will be called. */ });
+            </pre>
+            <p>
+              Callbacks <code>success</code> and <code>error</code> using with response interceptors will now always run after the interceptors (and wait for them to resolve in case they return a promise). Previously, the <code>error</code> callback was called before the <code>responseError</code> interceptor and the <code>success</code> callback was synchronously called after the <code>response</code> interceptor. See the example <a href="https://github.com/angular/angular.js/blob/master/CHANGELOG.md#resource-due-to-1">here</a>.
+            </p>
+
+            <h3>$http</h3>
+            <p>
+              Custom callback methods <code>success()</code> and <code>error()</code> of <code>$http</code> have been removed. We should use the standard <code>then()</code>/<code>catch()</code> promise methods instead, but the method signatures and return values are different:
+            </p>
+            <pre>
+// Before:
+function getQoSPolicies(...) {
+  ...
+  return apiService.get(...)
+    .success(function onSuccess(data) {
+      data.items.forEach(...);
+    })
+    .error(function onError() {
+      ...
+    });
+}
+
+// After:
+function getQoSPolicies(...) {
+  ...
+  return apiService.get(...)
+    .then(function onSuccess(response) {
+      response.data.items.forEach(...);
+    })
+    .catch(function onError() {
+      ...
+    });
+}
+            </pre>
+            <p>
+              There is another option. When using <code>$http(...).success(onSuccess).error(onError)</code> or <code>$http(...).then(onSuccess, onError)</code>, the <code>onError()</code> callback will only handle errors/rejections produced by the <code>$http()</code> call. If the <code>onSuccess()</code> callback produces an error/rejection, it won't be handled by <code>onError()</code> and might go unnoticed. In contrast, when using <code>$http(...).then(onSuccess).catch(onError)</code>, <code>onError()</code> will handle errors/rejections produced by both <code>$http()</code> and <code>onSuccess()</code>.
+            </p>
+            <p>
+              More information <a href="https://github.com/angular/angular.js/blob/master/CHANGELOG.md#http-due-to">here</a>.
+            </p>
+
+            <h3>$preAssignBindingsEnabled</h3>
+            <p>
+              Previously, <code>$compileProvider.preAssignBindingsEnabled</code> was set to true by default. This means bindings were pre-assigned in component constructors. In AngularJS 1.5+ the place to put the initialization logic relying on bindings being present is the controller $onInit method:
+            </p>
+            <pre>
+// Before:
+function MetadataTreeController(metadataTreeService, defaults) {
+  var ctrl = this;
+  ...
+  ctrl.customItem = '';
+  ctrl.filterText = {
+    available: '',
+    existing: ''
+  };
+};
+
+// After:
+function MetadataTreeController(metadataTreeService, defaults) {
+  var ctrl = this;
+  ...
+  this.$onInit = function init() {
+    ctrl.customItem = '';
+    ctrl.filterText = {
+      available: '',
+      existing: ''
+    };
+  };
+};
+            </pre>
+            <p>
+              See more <a href="https://github.com/angular/angular.js/blob/master/CHANGELOG.md#breaking-changes-4">here</a>.
+            </p>
+            <h3>Diving deeper. Possibly unhandled rejection errors</h3>
+            <p>
+              One on the most notable changes introduced in 1.6 is that possibly unhandled promise rejections are reported now instead of going unnoticed. Essentially, the error "Possibly unhandled rejection" appears whenever a promise is rejected/resolved with a failure and there is no <code>catch()</code> block to handle it.
+            </p>
+            <p>
+              A simple way to get rid of all these errors is to disable the new behaviour:
+            </p>
+            <pre>
+app.config(function ($qProvider) {
+    $qProvider.errorOnUnhandledRejections(false);
+});
+            </pre>
+            <p>
+              However this quick fix doesn't completely roll back to the old behavour. If there's some issue in the code, it will just mask the error. The better way to get rid of unhandled rejections is to actually handle them. The tricky part is that there is no solution that fits all the cases. There's a few examples from Horizon: 
+            </p>
+            <pre>
+// Before:
+function afterCheck(result) {
+  var outcome = $q.reject();
+  ...
+}
+
+// After:
+function afterCheck(result) {
+  var outcome = $q.reject().catch(angular.noop);
+  ...
+}
+            </pre>
+            <p>The handler <code>angular.noop</code> is a function that does nothing. We can use it in case we don't need anything specific for handling an error. It can be used for testing rejected promises too:
+            </p>
+            <pre>
+// Before:
+it('disallows delete if policy is not owned by user',
+  function testOwner() {
+    deferred.reject();
+    service.allowed().failure(resolver.error);
+    ...
+  }
+);
+
+// After:
+it('disallows delete if policy is not owned by user',
+  function testOwner() {
+    deferred.promise.catch(angular.noop);
+    deferred.reject();
+    service.allowed().failure(resolver.error);
+    ...
+  }
+);
+            </pre>
+            <pre>
+// Before:
+$scope.workflow = {
+  steps: [
+    { id: 'one' },
+    {
+      id: 'two',
+      checkReadiness: function() { return checkReadinessPromises[0].promise; }
+    },
+    ...
+  ]
+};
+
+checkReadinessPromises[0].reject();
+
+// After:
+$scope.workflow = {
+  steps: [
+    { id: 'one' },
+    {
+      id: 'two',
+      checkReadiness: function() {
+        return checkReadinessPromises[0].promise.catch(angular.noop);
+      }
+    },
+    ...
+  ]
+};
+
+checkReadinessPromises[0].reject('reject two');
+            </pre>
+            <p>
+              And finally an interesting example with reversed logic. We are checking name conflict here, so if we successfully find a name, we reject it:
+            </p>
+            <pre>
+// Before:
+function checkContainerNameConflict(containerName) {
+  ...
+  var def = $q.defer();
+  swiftAPI.getContainer(containerName, true).then(def.reject, def.resolve);
+  return def.promise;
+}
+
+// swiftAPI:
+
+function getContainer(container, ignoreError) {
+  var promise = apiService.get(service.getContainerURL(container) + '/metadata/');
+  if (ignoreError) {
+    return promise.catch(angular.noop);
+  }
+  return promise.catch(function onError() {
+    ...
+  });
+}
+
+// After:
+function checkContainerNameConflict(containerName) {
+  ...
+  var def = $q.defer();
+  return swiftAPI.getContainer(containerName, true)
+    .then(function onSuccess(response) {
+      return $q.reject(response);
+  }, function onError() { return true; });
+}
+
+// swiftAPI:
+
+function getContainer(container, ignoreError) {
+  var promise = apiService.get(service.getContainerURL(container) + '/metadata/');
+  if (ignoreError) {
+    return promise;
+  }
+  return promise.catch(function onError() {
+    ...
+  });
+}
+            </pre>
+            <p>
+              Happy migration!
+            </p>
+
+
+
+
+
+
+
+          </div>
+          
+          <div id="about" class="content-region hide">
+            <h2>About</h2>
+            <p>
+              Sharing my experience of dealing with OpenStack Horizon and more.
+            </p>
+          </div>
+          
+          <div id="contact" class="content-region hide">
+            <h2>Contact</h2>
+            <p>
+              Here be dragons 
+            </p>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <footer>  
+      Powered by dark magic and procrastination
+    </footer>
+    
+    <!-- Load additional JS scripts here -->
+    <script type="text/javascript" src="script.js"></script>
+    
+  </body>
+</html>
