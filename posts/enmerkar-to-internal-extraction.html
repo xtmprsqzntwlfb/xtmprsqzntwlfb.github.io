@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>When Good Dependencies Go Stale: Internalizing i18n Extraction in OpenStack Horizon | Pragma & Prose</title>
+  <meta name="description" content="How we moved from enmerkar to internal message extraction and removed a dependency that blocked our setuptools upgrade">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma & Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>When Good Dependencies Go Stale: Internalizing i18n Extraction in OpenStack Horizon</h2>
+          <p class="post-date">
+            <time datetime="2026-04-22">April 22, 2026</time>
+          </p>
+
+          <p>
+            Sometimes the best way to fix a dependency problem is to delete the dependency entirely. This is the story of how OpenStack Horizon moved from <code>enmerkar</code> to internal Django template message extraction, implementing the functionality in 181 lines of code.
+          </p>
+
+          <h3>The Problem: When setuptools Moves On</h3>
+          <p>
+            It started innocently enough. Setuptools 82.0.0 was released, and suddenly our CI was red. The culprit? The <code>pkg_resources</code> module had been removed from setuptools after years of deprecation warnings. Most projects had already migrated to <code>importlib.resources</code> and <code>importlib.metadata</code>, but we had a problem: <code>enmerkar</code>, our Django template message extractor, still depended on <code>pkg_resources</code>.
+          </p>
+          <p>
+            The quick fix was obvious:
+          </p>
+          <pre>
+# tox.ini
+setuptools&lt;82  # Required by enmerkar
+          </pre>
+          <p>
+            But pinning setuptools felt wrong. This wasn't a "we need time to migrate" pin — this was a "we're waiting for an external dependency to catch up" pin. And looking at enmerkar's repository, the outlook wasn't great.
+          </p>
+
+          <h3>Understanding Enmerkar</h3>
+          <p>
+            For context, <code>enmerkar</code> is a fork of <code>django-babel</code>, which itself had gone quiet years ago with pull requests for Django compatibility piling up unanswered. When Horizon migrated to enmerkar around version 18.0.0, it was the right choice — a maintained fork that worked with modern Django.
+          </p>
+          <p>
+            Enmerkar's job is straightforward: extract translatable messages from Django templates. When you run <code>tox -e manage -- extract_messages</code>, it scans your templates for patterns like:
+          </p>
+          <pre>
+{% trans "Click here to continue" %}
+
+{% blocktrans %}
+  Welcome, {{ name }}!
+{% endblocktrans %}
+
+{{ _("Server created") }}
+          </pre>
+          <p>
+            It finds these strings and dumps them into a Portable Object Template (POT) file that translators can work with. Critical infrastructure, runs on every build, touches the entire codebase.
+          </p>
+
+          <h3>The "Wait, How Much Code Is This?" Moment</h3>
+          <p>
+            The issue was brought to the <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/thread/IYJ5VEVNQOFZ6GQX5LEMX5PKHGROGZ5A/" target="_blank" rel="noopener noreferrer">openstack-discuss mailing list</a> after the <code>propose-translation-update</code> job started failing. A fix PR had been sitting in enmerkar's repository for over a month with no response from maintainers.
+          </p>
+          <p>
+            Several options were discussed, from quick hot-fixes (hardcoding <code>setuptools&lt;82</code> in the job script, applying the importlib.metadata fix during CI) to more fundamental solutions like forking enmerkar. One option stood out: copy the extraction logic directly into Horizon.
+          </p>
+          <p>
+            We decided to actually look at what enmerkar was doing for us. How much complexity were we depending on?
+          </p>
+          <p>
+            Turns out: not much. The core extraction logic was a single function around 200 lines, with no dependencies beyond Django itself. It parsed Django template tokens, looked for translation tags, and yielded them to Babel. It's BSD 3-Clause licensed, so copying it was legally straightforward. And critically, registering it as a Babel extractor entry point meant Horizon plugins would automatically benefit without needing to update their own requirements.
+          </p>
+          <p>
+            There was an important constraint: most Horizon plugins don't declare enmerkar in their own <code>requirements.txt</code> — they depend on Horizon's requirements. Any solution had to work for the entire ecosystem, not just the core project.
+          </p>
+          <p>
+            The decision became clear: why wait for an external project to fix setuptools compatibility when we could internalize this critical piece of infrastructure in an afternoon?
+          </p>
+
+          <h3>The Implementation</h3>
+          <p>
+            The new extraction module lives in <code>horizon/utils/babel_extract_django.py</code>. Here's the core function signature:
+          </p>
+          <pre>
+def extract_django(fileobj, keywords, comment_tags, options):
+    """Extract messages from Django template files.
+
+    :param fileobj: the file-like object the messages should be
+                    extracted from
+    :param keywords: a list of keywords (i.e. function names) that
+                     should be recognized as translation functions
+    :param comment_tags: a list of translator tags to search for and
+                         include in the results
+    :param options: a dictionary of additional options (optional)
+    :return: an iterator over (lineno, funcname, message, comments)
+             tuples
+    """
+          </pre>
+          <p>
+            The function handles Django's template tokens — <code>TEXT</code>, <code>VAR</code>, and <code>BLOCK</code> types — and recognizes several translation patterns:
+          </p>
+          <ul>
+            <li><code>{% trans %}</code> — inline translations</li>
+            <li><code>{% blocktrans %}</code> — block-level translations with variable interpolation</li>
+            <li>Context-aware translations with <code>pgettext</code> and <code>npgettext</code></li>
+            <li>Plural forms with <code>ngettext</code></li>
+          </ul>
+          <p>
+            The trickiest part? Handling <code>blocktrans</code> with variables:
+          </p>
+          <pre>
+{% blocktrans with name=user.name %}
+  Welcome, {{ name }}!
+{% endblocktrans %}
+          </pre>
+          <p>
+            This needs to become <code>"Welcome, %(name)s!"</code> in the POT file so translators know where the variable goes. The extraction logic tracks state across tokens, building up the message string and variable mappings as it walks through the block.
+          </p>
+
+          <h3>Plugging Into Babel</h3>
+          <p>
+            Babel supports custom extractors via entry points in <code>pyproject.toml</code>:
+          </p>
+          <pre>
+[project.entry-points."babel.extractors"]
+django = "horizon.utils.babel_extract_django:extract_django"
+          </pre>
+          <p>
+            This is the same mechanism enmerkar used. When you run <code>pybabel extract</code>, Babel sees this entry point and uses our function for files matching the Django template pattern. No changes needed to <code>babel-django.cfg</code> or our extraction workflow.
+          </p>
+
+          <h3>The Cleanup</h3>
+          <p>
+            With the extraction logic internalized, we could finally delete:
+          </p>
+          <pre>
+# requirements.txt
+- enmerkar&gt;=0.7.1  # BSD
+
+# tox.ini
+- setuptools&lt;82  # Required by enmerkar
+          </pre>
+          <p>
+            Two dependencies gone. One constraint removed. Zero regressions.
+          </p>
+
+          <h3>Lessons Learned</h3>
+
+          <h4>The Threshold</h4>
+          <p>
+            Not every dependency needs to be a dependency. When you're pinning other packages to work around a third-party issue, it's time to ask: "How much code are we actually using here?" Sometimes reimplementation is cheaper than the coordination cost of waiting for upstream fixes.
+          </p>
+
+          <h4>Critical Paths Should Be Internal</h4>
+          <p>
+            Message extraction runs on every build. It touches every template. It's in the hot path for releases. Infrastructure this critical deserves to be under your direct control, not hostage to the maintenance bandwidth of an external project.
+          </p>
+
+          <h4>Dependency Hygiene</h4>
+          <p>
+            Dependencies are like servers: they require maintenance, they accumulate cruft, and eventually they fail. The difference is you can't just <code>apt-get upgrade</code> an abandoned Python package. Regular dependency audits aren't just about security — they're about sustainability.
+          </p>
+
+          <h4>The Setuptools Evolution</h4>
+          <p>
+            The removal of <code>pkg_resources</code> is part of a broader modernization in Python packaging. Projects still using <code>pkg_resources</code> need to migrate to:
+          </p>
+          <ul>
+            <li><code>importlib.metadata</code> — for package metadata</li>
+            <li><code>importlib.resources</code> — for accessing package data</li>
+            <li><code>packaging</code> — for version parsing and specifiers</li>
+          </ul>
+          <p>
+            The setuptools maintainers gave years of deprecation warnings, but the ecosystem still had stragglers. When a foundational tool moves on, you either move with it or get left behind.
+          </p>
+
+          <h3>Was It Worth It?</h3>
+          <p>
+            Absolutely. We traded:
+          </p>
+          <ul>
+            <li>An external dependency with uncertain maintenance → 181 lines of code we control</li>
+            <li>A setuptools version pin blocking updates → Freedom to upgrade</li>
+            <li>Hoping upstream fixes compatibility → Fixing it ourselves in one afternoon</li>
+          </ul>
+          <p>
+            The new code is tested, documented, and lives right next to the code that uses it. When Django's template syntax changes, we'll see it in our tests. When Babel updates its extractor API, we'll adapt immediately.
+          </p>
+          <p>
+            Sometimes the best architecture is the one with fewer moving parts.
+          </p>
+
+          <h3>The Code</h3>
+          <p>
+            If you're curious about the full implementation, check out <a href="https://opendev.org/openstack/horizon/commit/8d4ede745c" target="_blank" rel="noopener noreferrer">the commit</a>. The extraction logic, tests, and configuration changes are all there.
+          </p>
+          <p>
+            And if you're dealing with a similar dependency problem: measure twice, internalize once. You might be surprised how little code you actually need.
+          </p>
+
+          <hr style="margin: 3rem 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+
+          <p style="font-size: 1.3rem; font-style: italic; color: rgba(255, 255, 255, 0.7);">
+            <strong>Further reading:</strong><br>
+            <a href="https://docs.openstack.org/horizon/latest/contributor/topics/translation.html" target="_blank" rel="noopener noreferrer">Horizon Translation Documentation</a><br>
+            <a href="https://setuptools.pypa.io/en/latest/history.html" target="_blank" rel="noopener noreferrer">Setuptools 82.0 Release Notes</a><br>
+            <a href="https://github.com/Zegocover/enmerkar" target="_blank" rel="noopener noreferrer">Enmerkar on GitHub</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+</body>
+</html>
