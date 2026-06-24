@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>The Elephant in the Room: Why Horizon Still Runs on AngularJS | Pragma & Prose</title>
+  <meta name="description" content="AngularJS reached end-of-life in December 2021. OpenStack Horizon is still built on it in 2024. Here's why that's not as crazy as it sounds.">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma & Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>The Elephant in the Room: Why Horizon Still Runs on AngularJS</h2>
+          <p class="post-date">
+            <time datetime="2024-08-15">August 15, 2024</time>
+          </p>
+
+          <p>
+            On December 31, 2021, Google officially ended support for AngularJS. No more security patches. No more bug fixes. No more anything. The framework was declared dead.
+          </p>
+          <p>
+            As of 2024, OpenStack Horizon — the dashboard used by thousands of OpenStack deployments worldwide — is still built on it.
+          </p>
+          <p>
+            Let me explain why that's not as crazy as it sounds.
+          </p>
+
+          <h3>The Scale of the Problem</h3>
+          <p>
+            This isn't a few components sprinkled in for interactivity. AngularJS is deeply woven into Horizon's architecture. Entire panels are Angular-based:
+          </p>
+          <ul>
+            <li>The Images panel</li>
+            <li>The Launch Instance workflow (with its multi-step wizard)</li>
+            <li>Network topology views</li>
+            <li>Countless modal dialogs and schema forms</li>
+          </ul>
+          <p>
+            The code is organized in three tiers: dashboard-specific code, application-shared utilities, and framework-reusable components. Angular module names map directly to the directory structure. It's not a mess — it's actually well-organized, following the John Papa style guide, with proper testing and linting.
+          </p>
+          <p>
+            The problem is there's just so much of it.
+          </p>
+
+          <h3>Why "Just Upgrade to Angular 2" Doesn't Work</h3>
+          <p>
+            Here's the thing that catches people off guard: Angular 2+ is not AngularJS 2.0. It's a completely different framework that happens to share a name.
+          </p>
+          <p>
+            Between Angular 1.x (AngularJS) and Angular 2, Google rewrote everything from scratch. Different architecture (components vs. controllers), different syntax (TypeScript vs. JavaScript), different tooling (CLI vs. Bower), different everything.
+          </p>
+          <p>
+            "Upgrading" from AngularJS to modern Angular is the same amount of work as migrating to React or Vue. You're rewriting your frontend.
+          </p>
+          <p>
+            There is an incremental migration path called ngUpgrade that lets you run both frameworks side-by-side, gradually porting components. It's meant for large applications that can't afford a big-bang rewrite. But here's the catch: you still have to rewrite every component eventually. It just spreads the pain over months or years instead of weeks.
+          </p>
+
+          <h3>The Plugin Ecosystem</h3>
+          <p>
+            Horizon isn't just the core dashboard. It's a platform. There are dozens of plugins for different OpenStack services:
+          </p>
+          <ul>
+            <li>Octavia Dashboard for load balancers</li>
+            <li>Manila UI for shared filesystems</li>
+            <li>Magnum UI for container orchestration</li>
+            <li>And many more</li>
+          </ul>
+          <p>
+            These plugins depend on Horizon's framework code. When you write a Horizon plugin, you use the same AngularJS patterns, the same widgets, the same schema forms. It's part of the API.
+          </p>
+          <p>
+            Migrating Horizon to a new framework doesn't just mean rewriting Horizon. It means either:
+          </p>
+          <ul>
+            <li>Breaking every plugin (and asking each maintainer to rewrite)</li>
+            <li>Supporting two frameworks in parallel (the ngUpgrade approach, but across an entire ecosystem)</li>
+            <li>Building a compatibility layer (which defeats the purpose of modernizing)</li>
+          </ul>
+          <p>
+            None of these options are appealing.
+          </p>
+
+          <h3>The Cost-Benefit Analysis</h3>
+          <p>
+            Let's be honest about what we'd gain from a migration:
+          </p>
+          <p>
+            <strong>Benefits:</strong>
+          </p>
+          <ul>
+            <li>Modern tooling and developer experience</li>
+            <li>Easier to recruit developers (nobody wants to learn AngularJS in 2024)</li>
+            <li>Better performance (maybe — modern frameworks are faster, but it depends on what you're doing)</li>
+            <li>Active community support and ecosystem</li>
+          </ul>
+          <p>
+            <strong>Costs:</strong>
+          </p>
+          <ul>
+            <li>Months of development time to rewrite the frontend</li>
+            <li>Testing everything to ensure feature parity</li>
+            <li>Plugin ecosystem disruption</li>
+            <li>Risk of introducing new bugs in stable, working code</li>
+            <li>Opportunity cost — that time could be spent on new features</li>
+          </ul>
+          <p>
+            The hard truth? For a project like Horizon, the costs are enormous and the benefits are mostly about developer convenience, not user-facing improvements.
+          </p>
+
+          <h3>The Stability Paradox</h3>
+          <p>
+            Here's the weird thing about running on dead technology: it's actually quite stable.
+          </p>
+          <p>
+            AngularJS 1.8.2, the final version, was released in 2020. We <a href="angular-migration-1-5-to-1-8.html">migrated to it in early 2023</a>, cleaning up the API changes and deprecated patterns along the way. Since then? It just works.
+          </p>
+          <p>
+            No new versions to track. No breaking changes to adapt to. No framework churn. The code we write today will work the same way next year, because the framework literally cannot change — it's frozen.
+          </p>
+          <p>
+            There's something liberating about that. We're not on the upgrade treadmill anymore.
+          </p>
+          <p>
+            Of course, there's a flip side. No new features. No performance improvements. No security fixes from upstream. We're on our own.
+          </p>
+
+          <h3>Living in Maintenance Mode</h3>
+          <p>
+            So what's the strategy? We're in what I'd call "active maintenance mode":
+          </p>
+          <p>
+            <strong>Security:</strong> We stay on the latest (and final) AngularJS version, 1.8.2, which includes all known security fixes. If a new vulnerability is discovered, we'd have to patch it ourselves — but AngularJS is mature and battle-tested code. The attack surface is well-understood.
+          </p>
+          <p>
+            <strong>Development:</strong> We're not expanding the AngularJS footprint. New features go into Django views when possible. When we must write JavaScript, we keep it simple and avoid creating new Angular dependencies.
+          </p>
+          <p>
+            <strong>Recruitment:</strong> This is the hardest part. As one mailing list discussion put it in 2020: "it's very hard to get anyone enthusiastic about working on Horizon" because of the AngularJS codebase. That hasn't changed. We frame it honestly — you'll be maintaining legacy code, but you'll also be keeping critical infrastructure running for thousands of deployments.
+          </p>
+          <p>
+            <strong>The Long Game:</strong> Eventually, we'll need to migrate. But it'll happen when:
+          </p>
+          <ul>
+            <li>The pain of staying exceeds the pain of moving</li>
+            <li>We have the resources for a multi-month rewrite effort</li>
+            <li>We can coordinate with the plugin ecosystem</li>
+            <li>There's a clear target framework</li>
+          </ul>
+          <p>
+            Until then, we're doing something that sounds absurd but actually works: running production systems on a dead framework.
+          </p>
+
+          <h3>The Broader Lesson</h3>
+          <p>
+            The tech industry loves to talk about modernization, about staying current, about avoiding technical debt. And those are real concerns — technical debt compounds, old frameworks become security liabilities, recruitment gets harder.
+          </p>
+          <p>
+            But there's a counter-narrative that doesn't get enough airtime: sometimes the old thing just works. Sometimes the stability of a frozen, well-understood codebase is worth more than the shiny new framework. Sometimes "good enough and stable" beats "modern but churning."
+          </p>
+          <p>
+            Horizon on AngularJS is technical debt by any reasonable definition. But it's technical debt we've chosen to carry because the alternative — a multi-month rewrite with ecosystem-wide coordination — is more expensive than the interest payments.
+          </p>
+          <p>
+            We'll pay it off eventually. Just not today.
+          </p>
+
+          <h3>What About You?</h3>
+          <p>
+            If you're running AngularJS in production in 2024, you're not alone. Plenty of applications are in the same boat — internal tools, enterprise dashboards, embedded UIs in larger systems.
+          </p>
+          <p>
+            The question isn't "should we have migrated already?" It's "what's the right time for us?" And the answer depends on:
+          </p>
+          <ul>
+            <li>How much AngularJS code you have</li>
+            <li>Whether it's still meeting user needs</li>
+            <li>How much runway you have before a real crisis (security vulnerability, browser compatibility break)</li>
+            <li>What else you could be building with that migration time</li>
+          </ul>
+          <p>
+            For Horizon, the math says: keep running, keep monitoring, and plan for an eventual migration when the conditions are right.
+          </p>
+          <p>
+            In the meantime, we'll be here, quietly maintaining the elephant in the room.
+          </p>
+
+          <hr style="margin: 3rem 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+
+          <p style="font-size: 1.3rem; font-style: italic; color: rgba(255, 255, 255, 0.7);">
+            <strong>Further reading:</strong><br>
+            <a href="https://docs.openstack.org/horizon/latest/contributor/topics/angularjs.html" target="_blank" rel="noopener noreferrer">Horizon AngularJS Topic Guide</a><br>
+            <a href="https://lists.openstack.org/pipermail/openstack-discuss/2020-June/015614.html" target="_blank" rel="noopener noreferrer">2020 Mailing List Discussion on AngularJS EOL</a><br>
+            <a href="https://blog.angular.io/discontinued-long-term-support-for-angularjs-cc066b82e65a" target="_blank" rel="noopener noreferrer">Google's AngularJS EOL Announcement</a><br>
+            <a href="https://v17.angular.io/guide/upgrade" target="_blank" rel="noopener noreferrer">Angular's ngUpgrade Guide</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+</body>
+</html>
