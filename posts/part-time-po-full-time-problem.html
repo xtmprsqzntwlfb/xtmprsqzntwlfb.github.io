@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Part-Time Product Owner: Full-Time Problem | Pragma & Prose</title>
+  <meta name="description" content="What happens when you're 50% PO for three teams, 50% software engineer, and 100% OpenStack PTL? The math works perfectly: 200% doesn't fit into 100%.">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma & Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>Part-Time Product Owner: Full-Time Problem</h2>
+          <p class="post-date">
+            <time datetime="2025-10-15">October 15, 2025</time>
+          </p>
+
+          <p>
+            One of the fundamental principles in product management is that being a Product Owner is a full-time job. A part-time PO arrangement is widely recognized as problematic — it typically means full-time responsibilities are being compressed into part-time hours.
+          </p>
+          <p>
+            I learned this the hard way. For the past few months, I've been trying to do three jobs at once: 50% Product Owner for three engineering teams, 50% software engineer, and 100% OpenStack Horizon PTL.
+          </p>
+          <p>
+            Spoiler: The math works perfectly. 50% + 50% + 100% = 200%. You can't fit 200% into 100% of your time.
+          </p>
+
+          <h3>The Reality of "Part-Time" PO</h3>
+          <p>
+            Here's what being a PO for three teams actually looks like in practice: roughly 18 people across three distinct engineering domains, each with its own backlog, stakeholders, and technical challenges. Each team operating in a different problem space, requiring different context, different priorities, different types of decisions.
+          </p>
+          <p>
+            My recurring rituals across all three teams: weekly sprint meetings, backlog refinement sessions, sprint planning, review/demo meetings, retrospectives, bi-weekly high-level planning, and bi-weekly scrum of scrums. That's before counting stakeholder alignment meetings, dashboard reviews, and the inevitable "quick questions" that appear in chat.
+          </p>
+          <p>
+            I volunteered to try this, curious if it was manageable. What I learned quickly: "half of my time" for PO work doesn't mean half a job. It means trying to fit a full-time job into half the hours.
+          </p>
+
+          <h3>Add Engineering Work to the Mix</h3>
+          <p>
+            The other half of my time was software engineering. Writing code, reviewing patches, debugging production issues, maintaining CI/CD pipelines.
+          </p>
+          <p>
+            Having technical background as a PO does help — you understand technical constraints and can have informed discussions about implementation approaches. But there's a cost: engineering work requires deep focus. Product ownership requires constant availability. These two modes are fundamentally incompatible.
+          </p>
+          <p>
+            You can't get into flow state on a complex refactoring when you're supposed to be reviewing backlog priorities. You can't thoughtfully review architectural decisions when you're context-switching between three different technical domains hourly.
+          </p>
+
+          <h3>Now Add Leadership of a Global Open Source Project</h3>
+          <p>
+            In March 2024, I became the Project Team Lead (PTL) for OpenStack Horizon. This is a volunteer leadership role in one of the world's largest open source cloud platforms, used by thousands of deployments worldwide.
+          </p>
+          <p>
+            PTL responsibilities include:
+          </p>
+          <ul>
+            <li>Release management and coordination across stable branches</li>
+            <li>Community building and contributor onboarding</li>
+            <li>Cross-project coordination with other OpenStack teams</li>
+            <li>Architecture decisions and technical direction</li>
+            <li>Security response coordination</li>
+            <li>Representing Horizon at OpenStack events and PTG meetings</li>
+          </ul>
+          <p>
+            The PTL role is officially "volunteer," but in practice it's another part-time job. I'm shepherding releases, managing stable branch backports, coordinating dependency updates across the ecosystem, and making sure our CI doesn't break when the Python packaging ecosystem evolves.
+          </p>
+          <p>
+            Oh, and running for re-election every cycle, because this role isn't appointed — it's democratic.
+          </p>
+
+          <h3>The Surface Area Problem</h3>
+          <p>
+            When you're split across three roles, you optimize for the loudest fire. Strategic backlog grooming feels low-priority compared to unblocking a critical production issue or preventing a release slip. Long-term planning gets deferred when there's an urgent stakeholder escalation.
+          </p>
+          <p>
+            The issue isn't effort — I was working constantly. The issue is surface area. A full-time PO can stay on top of all the details. A part-time PO is constantly triaging what to let slip.
+          </p>
+          <p>
+            And things do slip. Questions that go unanswered for days. Priorities that aren't clear. Dependencies that should have been flagged weeks earlier. The teams don't complain because they assume you're too busy.
+          </p>
+          <p>
+            And they're right. You are too busy.
+          </p>
+
+          <h3>What the Research Says (and Why It's Right)</h3>
+          <p>
+            The Product Management literature is pretty clear on this: the PO role demands full-time commitment.
+          </p>
+          <p>
+            According to the Scrum Guide and most agile frameworks, a PO should be:
+          </p>
+          <ul>
+            <li>Available: developers need decisions quickly, not "let me get back to you after this code review."</li>
+            <li>Engaged: every ticket, every sprint goal, every backlog item needs context and prioritization.</li>
+            <li>Strategic: you're not just managing work items — you're shaping product direction based on stakeholder needs, market signals, and technical constraints.</li>
+            <li>Proactive: anticipating blockers, not just reacting to them.</li>
+          </ul>
+          <p>
+            When you're part-time, you become reactive by necessity. You triage the urgent. You defer the important. You miss the weak signals that turn into major problems two sprints later.
+          </p>
+          <p>
+            A full-time PO catches weak signals early — idle work, scope creep, missed dependencies. A part-time PO learns about them when they're already burning.
+          </p>
+          <p>
+            When urgent issues hit — and they always do — your "50% PO time" collapses. You drop everything to unblock the crisis, which means other work slips. The catch-22: many urgent issues stem from not having enough time for proactive work. Splitting your attention this way means you end up firefighting instead of preventing fires.
+          </p>
+
+          <h3>What Gets Sacrificed</h3>
+          <p>
+            With limited time across multiple roles, something has to give:
+          </p>
+
+          <h4>Strategic Thinking</h4>
+          <p>
+            Strategic work gets deferred in favor of immediate needs. Dashboards get reviewed for fires, not trends. Planning optimizes for this sprint, not next quarter. The backlog becomes a priority queue driven by urgency rather than value.
+          </p>
+
+          <h4>Engineering Depth</h4>
+          <p>
+            Engineering work shifts toward pragmatic compromises. Code reviews become quicker and more focused on critical issues. Development happens in smaller time blocks between meetings, which naturally leads to more incremental changes than deep refactoring.
+          </p>
+
+          <h4>Community Building</h4>
+          <p>
+            PTL work focuses on essential responsibilities — release management, critical bug triage, key meetings. The longer-term community work like mentoring new contributors, writing design docs, and proactive outreach takes a back seat.
+          </p>
+
+          <h4>Personal Sustainability</h4>
+          <p>
+            The cumulative effect is gradual exhaustion. Work that normally energizes you — solving hard problems, building consensus, delivering value — starts to feel like obligation. This is a structural issue, not a personal failing.
+          </p>
+
+          <h3>What Would Have Worked Better</h3>
+          <p>
+            Knowing what I know now, here are some alternatives that might have been more sustainable:
+          </p>
+
+          <h4>Dedicated Full-Time PO</h4>
+          <p>
+            A full-time PO for these three teams would have been ideal. Someone who could build the expertise, establish the relationships, and actually do the job properly, while I stayed focused on engineering and PTL work.
+          </p>
+
+          <h4>Scoped PO Responsibility</h4>
+          <p>
+            Taking PO responsibility for one team, where my technical expertise was strongest, while someone else owned the other two. Three teams turned out to be too much surface area for a part-time role.
+          </p>
+
+          <h4>Hybrid Role, But Realistic About It</h4>
+          <p>
+            If the role is genuinely both engineer and PO, being honest that it's more like 70% PO / 30% engineering, and keeping the engineering work light. No critical path features. No tight deadlines. Just backlog cleanup and reviews during low-PO-intensity weeks.
+          </p>
+
+          <h4>Adjust for PTL Time</h4>
+          <p>
+            Recognizing that being an OpenStack PTL is a significant time commitment and reducing other responsibilities accordingly.
+          </p>
+
+          <p>
+            In the end, I chose to try it as a temporary experiment, knowing it was ambitious. The experience taught me more than any article could have about why part-time PO roles are problematic.
+          </p>
+
+          <h3>Lessons Learned</h3>
+
+          <h4>Questions Worth Asking About Part-Time PO Roles</h4>
+          <p>
+            If you're considering a part-time Product Owner role, these questions can help clarify what you're signing up for:
+          </p>
+          <ul>
+            <li>What's the actual expected time commitment per week?</li>
+            <li>How many teams/products will you be responsible for?</li>
+            <li>What are your other responsibilities, and how will they be prioritized when there's conflict?</li>
+            <li>Who covers PO duties when you're focused on other work or unavailable?</li>
+          </ul>
+          <p>
+            Clear answers to these questions can help you set realistic expectations and boundaries from the start.
+          </p>
+
+          <h4>Context Switching Is a Tax You Can't Afford</h4>
+          <p>
+            Every time I switched from engineering to PO mode, I lost 15-30 minutes of mental state. When you're switching 6-8 times a day, that's 2-4 hours gone just to overhead. You're not being productive in either role — you're just being busy.
+          </p>
+          <p>
+            If you must do hybrid roles, batch the work. PO Mondays/Tuesdays, engineering Wednesdays/Thursdays, PTL Fridays. It's still not ideal, but at least you get some flow state.
+          </p>
+
+          <h4>Reactive Mode Becomes the Default</h4>
+          <p>
+            When you're stretched thin, you optimize for putting out fires. But fires are a symptom of poor proactive work. The less time you spend on strategic planning, backlog grooming, and stakeholder alignment, the more fires you get.
+          </p>
+          <p>
+            It's a vicious cycle. The only way out is to explicitly block time for proactive work and defend it ruthlessly. Which is nearly impossible when you're juggling multiple roles.
+          </p>
+
+          <h4>Pay Attention to What You're Letting Slip</h4>
+          <p>
+            When you notice patterns — tickets sitting idle, teams making assumptions because they can't get timely answers, dependencies discovered too late — those are signals that you don't have enough bandwidth for the role.
+          </p>
+          <p>
+            It's easy to rationalize: "I'm in the meetings, the team knows the priorities, they can proceed without constant input." Technically true. But that unattended work represents uncertainty. Developers making assumptions. Work that might get scrapped in review. Delays that don't show up in sprint metrics but compound over time.
+          </p>
+          <p>
+            When you see signs you're failing, believe them. Then fix the root cause (insufficient time for the role), not the symptom (work harder).
+          </p>
+
+          <h4>Know Your Limits Before You Test Them</h4>
+          <p>
+            I took on this arrangement because I was curious whether it could work and wanted to help bridge a gap while longer-term solutions were explored. It made sense to try.
+          </p>
+          <p>
+            What I learned: it's important to set clear boundaries and timelines upfront. When you take on an experimental role, define what success looks like, how long you'll try it, and what signals will tell you it's not working. Otherwise, temporary can become indefinite.
+          </p>
+
+          <h3>Observations on Part-Time PO Arrangements</h3>
+          <p>
+            Based on this experience and the research, part-time PO arrangements face some fundamental challenges. The role's responsibilities — availability, engagement, strategic thinking, proactive planning — don't naturally compress into part-time hours.
+          </p>
+          <p>
+            The research suggests that when full-time PO coverage isn't feasible, some teams explore alternatives like having a Scrum Master handle lightweight prioritization, forming a product committee of stakeholders and senior engineers, or bringing in external consultants who dedicate specific time blocks to the role. Each approach has tradeoffs.
+          </p>
+          <p>
+            My takeaway: for complex products with significant stakeholder demands, the math really does require dedicated full-time attention. Part-time arrangements might work as short-term bridges, but they're difficult to sustain long-term.
+          </p>
+
+          <h3>Final Thoughts</h3>
+          <p>
+            Being a Product Owner is hard. Being a software engineer is hard. Being an open source project leader is hard.
+          </p>
+          <p>
+            Doing all three at once isn't "hard" — it's impossible. I'm glad I tried it so I could learn that firsthand, but I wouldn't recommend it.
+          </p>
+          <p>
+            The experiment was valuable. It confirmed what the research says, gave me deep respect for what POs handle daily, and taught me practical lessons about context switching and the cost of divided attention. Those lessons extend well beyond this specific situation.
+          </p>
+          <p>
+            Sometimes the best product decision is the one you make about your own capacity.
+          </p>
+
+          <hr style="margin: 3rem 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+
+          <p style="font-size: 1.3rem; font-style: italic; color: rgba(255, 255, 255, 0.7);">
+            <strong>Further reading:</strong><br>
+            <a href="https://scrumguides.org/scrum-guide.html" target="_blank" rel="noopener noreferrer">The Scrum Guide - Product Owner Responsibilities</a><br>
+            <a href="https://www.scrum.org/resources/blog/why-you-need-only-one-product-owner" target="_blank" rel="noopener noreferrer">Why You Need Only ONE Product Owner (Scrum.org)</a><br>
+            <a href="https://age-of-product.com/product-owner-anti-patterns/" target="_blank" rel="noopener noreferrer">Product Owner Anti-Patterns (Age of Product)</a><br>
+            <a href="https://governance.openstack.org/tc/reference/projects/horizon.html" target="_blank" rel="noopener noreferrer">OpenStack Horizon Project Governance</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+</body>
+</html>
