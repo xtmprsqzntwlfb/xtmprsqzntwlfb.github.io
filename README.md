@@ -1,2 +1,5 @@
 # Here be dragons
-Some notes on my experience of dealing with OpenStack Horizon and more.
+
+I write code, navigate venerable dashboards and herd cats across open source communities. Sometimes all at once.
+
+Here I chronicle practical code, technical narratives and occasional dark magic.
