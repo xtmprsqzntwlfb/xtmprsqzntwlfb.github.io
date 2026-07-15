@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Vibe Coding Reality Check | Pragma & Prose</title>
+  <meta name="description" content="An experiment in letting an AI coding assistant write production code from descriptions alone: the expert's time is better spent writing the code than teaching the AI how.">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma & Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>Vibe Coding Reality Check</h2>
+          <p class="post-date">
+            <time datetime="2026-07-14">July 14, 2026</time>
+          </p>
+
+          <p>
+            I spent some time running an experiment on real OpenStack Horizon work: could an AI coding assistant produce valid, reviewable code if I gave it a clear description of the task and pointed it at existing reviewed code as an example, without me directing every individual change?
+          </p>
+          <p>
+            It couldn't.
+          </p>
+
+          <h3>The Setup</h3>
+          <p>
+            The task seemed ideal for this kind of test: migrating several API modules from a legacy client library to a newer one — repetitive work with a clear pattern and a reference implementation that had already passed code review.
+          </p>
+          <p>
+            In the simplest cases it worked on the first try, but the problems appeared the moment anything deviated from the happy path. The first migration required a backward-compatibility layer because of some specific complications, and the assistant learned this as the pattern, applying it to every subsequent module, even when a clean break was simpler and better. The compatibility layer was a judgment call for one specific situation, not a template, but the assistant couldn't tell the difference. Each time I had to stop it and give explicit instructions on what to do instead.
+          </p>
+
+          <h3>The Argument</h3>
+          <p>
+            The most revealing moment came when the tests started failing after the assistant's changes, and it insisted the failures were unrelated to its work. It analyzed the errors, looked at the test code, and concluded this must be a pre-existing issue. I disagreed: the test was passing before the change, it failed after, and that's not a coincidence, but the assistant held firm: 
+          </p>
+          <p>
+            "Try changing these lines and you'll see the tests are still failing."
+          </p>
+          <p>
+            So I did. And the tests passed.
+          </p>
+          <p>
+            "OK, you were right."
+          </p>
+          <p>
+            The assistant can reason about code it sees, but it can't draw on years of context it was never part of.
+          </p>
+
+          <h3>The Spiral</h3>
+          <p>
+            When the assistant got stuck on another failing test, it tended to escalate rather than reconsider: proposing increasingly invasive fixes, restructuring working code, adding helper functions to work around a problem it hadn't correctly diagnosed. After three rounds of this on one migration, I traced the actual error myself and found it in a completely different file. The tests were correct all along: the assistant had been "fixing" the wrong thing across three iterations, each one making the codebase worse. A human developer recognizes the feeling of going in circles and changes strategy; the assistant just keeps swinging harder.
+          </p>
+
+          <h3>The Conclusion</h3>
+          <p>
+            The irony of AI coding assistants is that they're most useful to people who need them least. To get valid code out of the assistant, I had to specify exact files and functions, override its architectural decisions and catch cross-module side effects it couldn't see, which meant I had to understand the code at least as well as if I were writing it myself. The time I spent rolling back bad fixes and describing context exceeded the time it would have taken to write the migration by hand.
+          </p>
+          <p>
+            Vibe coding works well enough for prototypes and pet projects, and AI assistants are genuinely good at generating boilerplate and following established patterns for well-scoped tasks, but the idea that you can simply describe what you want and get working production code falls apart on any project with real complexity and cross-module dependencies that require human judgment to navigate. There's no shortcut past understanding: the AI can type faster than you, but it can't think for you. Not yet.
+          </p>
+
+          <hr style="margin: 3rem 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+
+          <p style="font-size: 1.3rem; font-style: italic; color: rgba(255, 255, 255, 0.7);">
+            <strong>Further reading:</strong><br>
+            <a href="https://en.wikipedia.org/wiki/Vibe_coding" target="_blank" rel="noopener noreferrer">Vibe Coding (Wikipedia)</a><br>
+            <a href="https://governance.openstack.org/tc/reference/projects/horizon.html" target="_blank" rel="noopener noreferrer">OpenStack Horizon Project Governance</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+</body>
+</html>
