@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Leading the OpenStack Horizon Weekly IRC Meeting | Pragma & Prose</title>
+  <meta name="description" content="A step-by-step guide to chairing the OpenStack Horizon weekly IRC meeting.">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma & Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>Leading the OpenStack Horizon Weekly IRC Meeting</h2>
+          <p class="post-date">
+            <time datetime="2026-07-27">July 27, 2026</time>
+          </p>
+
+          <h3>Preparation</h3>
+
+          <p>
+            <strong>Update the Agenda Etherpad:</strong> Update agenda sections for the upcoming meeting on the Etherpad (ideally 24 hours in advance):
+          </p>
+          <ul>
+            <li>Review the <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org" target="_blank" rel="noopener noreferrer">OpenStack Mailing List</a> to identify any Horizon-related announcements</li>
+            <li>Monitor progress on release priority tasks</li>
+            <li>Confirm that all recent bug reports have been added: <a href="https://bugs.launchpad.net/horizon/+bugs?orderby=-id&start=0" target="_blank" rel="noopener noreferrer">Horizon bugs on Launchpad</a></li>
+            <li>Check if there's On-Demand Agenda added and plan the meeting correspondingly</li>
+          </ul>
+
+          <p>
+            <strong>Ping the Team:</strong> Drop a reminder before the meeting starts (ideally 15 minutes in advance)
+          </p>
+
+          <h3>Step-by-Step Meeting Execution (IRC Commands & Dialogue)</h3>
+
+          <p>
+            Copy and paste these exact MeetBot commands and dialogue flow into #openstack-horizon.
+          </p>
+
+          <h4>Call to Order & Roll Call (Minutes 0-5)</h4>
+          <pre>#startmeeting horizon</pre>
+          <ul>
+            <li>Start exactly on time. Use the MeetBot commands to log the session</li>
+            <li>Welcomes, introductions, and a quick roll call</li>
+            <li>Agenda: <a href="https://etherpad.opendev.org/p/horizon-release-priorities#L39" target="_blank" rel="noopener noreferrer">https://etherpad.opendev.org/p/horizon-release-priorities#L39</a></li>
+            <li>Wait 1-2 minutes for team members to type</li>
+          </ul>
+
+          <h4>Notices (Minutes 5-10)</h4>
+          <pre>#topic Notices</pre>
+          <ul>
+            <li>Schedule reminder:
+            <br> - This week is R-N week
+            <br> - Hibiscus Release Schedule: <a href="https://releases.openstack.org/hibiscus/schedule.html" target="_blank" rel="noopener noreferrer">https://releases.openstack.org/hibiscus/schedule.html</a>
+            </li>
+            <li>Horizon-related and global announcements from OpenStack Mailing List</li>
+          </ul>
+
+          <h4>Release priorities (Minutes 10-20)</h4>
+          <pre>#topic Release priorities</pre>
+          <ul>
+            <li>Focus on the current release cycle priorities</li>
+            <li>Discuss the status of high-priority tasks: are they done, in progress or blocked</li>
+            <li>Identify any strict deadline blockers (e.g., Feature Freeze approaching)</li>
+            <li>If the patch is ready, say it explicitly, asking the team to review</li>
+            <li>If the patch is WIP, ask for any status update from the author</li>
+          </ul>
+
+          <h4>Bug deputy report (Minutes 20-30)</h4>
+          <pre>#topic Bug deputy report</pre>
+          <ul>
+            <li>Review newly reported bugs or security issues</li>
+            <li>If Horizon check/gate queues are broken, find a volunteer to investigate the CI</li>
+          </ul>
+
+          <h4>Open reviews (Minutes 30-40)</h4>
+          <pre>#topic Open reviews</pre>
+          <ul>
+            <li>Point out the patches waiting for review</li>
+            <li>Contributors are welcome to discuss their patches on review</li>
+          </ul>
+
+          <h4>On-demand agenda (Minutes 40-50)</h4>
+          <pre>#topic On-demand agenda</pre>
+          <ul>
+            <li>Contributors can submit topics beforehand, or the PTL may include follow-ups from earlier debates</li>
+            <li>This space also welcomes members of other teams to address cross-project concerns</li>
+          </ul>
+
+          <h4>Open discussion (Minutes 50-60)</h4>
+          <pre>#topic Open discussion</pre>
+          <ul>
+            <li>Open the floor for any other discussion</li>
+            <li>Contributors can use this space to initiate discussions or introduce community events</li>
+          </ul>
+
+          <h4>Wrap up (Minutes 60)</h4>
+          <ul>
+            <li>Thank everyone for joining the meeting</li>
+          </ul>
+          <pre>#endmeeting</pre>
+          <ul>
+            <li>MeetBot will automatically output links to the HTML summary and .log.html file</li>
+          </ul>
+
+          <h3>Post-Meeting Wrap Up</h3>
+
+          <h4>Verify MeetBot log output:</h4>
+          <ul>
+            <li>Click the meetings.opendev.org link generated by #endmeeting to confirm that all the tags were captured properly</li>
+          </ul>
+          <h4>Update the Etherpad:</h4>
+          <ul>
+            <li>Clear the active agenda area (line 39) and create the header for the next meeting date</li>
+          </ul>
+
+          <h3>Pro-Tips for the Chair</h3>
+          <ul>
+            <li><strong>Use Meetbot Commands:</strong> if needed, use #info, #link, and #action to make the auto-generated meeting minutes easier to read afterward.</li>
+            <li><strong>Manage the Silence:</strong> IRC has lag. After asking a question, explicitly state: "Waiting one minute for responses" to give people time to type long thoughts.</li>
+            <li><strong>Take It Offline:</strong> If developers get into a deep architecture debate, politely intervene and suggest taking it to a dedicated Etherpad or the Mailing List to keep the meeting moving.</li>
+          </ul>
+
+          <h3>Links</h3>
+          <ul>
+            <li><a href="https://wiki.openstack.org/wiki/Meetings" target="_blank" rel="noopener noreferrer">OpenStack Wiki General Meetings Guide</a></li>
+            <li><a href="https://wiki.debian.org/MeetBot" target="_blank" rel="noopener noreferrer">MeetBot User Manual & Reference</a></li>
+            <li><a href="https://etherpad.opendev.org/p/horizon-release-priorities" target="_blank" rel="noopener noreferrer">OpenStack Horizon Meeting Agendas</a></li>
+          </ul>
+
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+</body>
+</html>
