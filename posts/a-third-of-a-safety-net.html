@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>A Third of a Safety Net: What My Horizon Plugin Wasn't Checking | Pragma & Prose</title>
+  <meta name="description" content="Astrolabe describes Horizon's forms from the outside, so it has to notice when Horizon moves. Its self-check looked healthy while watching one of the three things that could break.">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="mask-icon" href="../favicon.svg" color="#000000">
+  <link rel="alternate icon" type="image/png" href="../favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma & Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>A Third of a Safety Net: What My Horizon Plugin Wasn't Checking</h2>
+          <p class="post-date">
+            <time datetime="2026-09-30">September 30, 2026</time>
+          </p>
+
+          <p>
+            I have been building a small Horizon plugin called Astrolabe. It does one thing: you click around the admin dashboard as usual, and afterwards it shows you the <code>openstack</code> commands and <code>curl</code> calls that would have done the same work. Middleware watches form submissions on their way through, a panel renders what it saw. No database, no new API.
+          </p>
+          <p>
+            The interesting part is the rules. Each one is plain Python data describing a Horizon form: which class it is, which fields matter, where they land in a REST body:
+          </p>
+
+          <pre>
+{
+    "id": "flavor-create",
+    "title": "Create flavor",
+    "url": r"/admin/flavors/create/?$",
+    "form": "openstack_dashboard.dashboards.admin.flavors.workflows"
+            ":CreateFlavorInfoAction",
+    "command": ["openstack", "flavor", "create"],
+    "fields": [
+        opt("vcpus", "--vcpus", cast="int"),
+        opt("memory_mb", "--ram", api="ram", cast="int"),
+        arg("name"),
+    ],
+}
+          </pre>
+
+          <p>
+            Which means Astrolabe is a description of code it does not own, kept in a separate repository on a separate release cadence. Not that the change would escape me — I am Horizon's PTL, so the patch that moves a panel goes past me either way. Seeing that patch and remembering that a plugin in another repository quietly leaned on the old path are two different acts, and only one of them is reliable.
+          </p>
+          <p>
+            Horizon will move, and I will know about it. Astrolabe needs to know without me.
+          </p>
+
+          <h3>The self-check I was pleased with</h3>
+          <p>
+            So I wrote one early. <code>rules.validate()</code> imports the Horizon form class each rule names, reads its <code>base_fields</code> and confirms every field the rule mentions still exists. A rename upstream becomes a logged warning instead of a command that loses a flag without saying so.
+          </p>
+          <p>
+            It runs as the fourth layer of the test suite, the one that needs an actual Horizon checkout on the path, and it reported nothing wrong across all ten rules. I was pleased with it in the specific way you are pleased with a thing you built to catch a problem you have not had yet.
+          </p>
+
+          <h3>The panel that recorded nothing</h3>
+          <p>
+            The first crack showed up while testing against devstack. I created a role through Identity → Roles, went to the Astrolabe panel and found it empty. Deleted one. Still empty. Every other panel I tried was fine.
+          </p>
+          <p>
+            The rule was correct. There was no form.
+          </p>
+          <p>
+            Horizon ships the roles panel as its AngularJS variant by default, through <code>ANGULAR_FEATURES['roles_panel']</code>, and that variant POSTs JSON to the <code>/api/*</code> proxy rather than submitting a Django form. Worse, in that mode the Django create view is not routed at all, so the URL my rule was waiting on did not resolve to anything. Flipping the flag in <code>local_settings.d</code> brought both the panel and the recording back:
+          </p>
+
+          <pre>
+# local_settings.d/_11_toggle_angular_features.py
+ANGULAR_FEATURES.update({'roles_panel': False})
+          </pre>
+
+          <p>
+            Not a bug, a mode — and one that will sort itself out as the Angular panels leave. What stayed with me was the shape of the failure. A rule can be entirely accurate about a form and still never see a single submission, and nothing in my weekly job had an opinion about that.
+          </p>
+
+          <h3>Three ways a rule rots</h3>
+          <p>
+            Sitting down to enumerate it properly, a rule depends on three separate facts about Horizon, and each can change without the others:
+          </p>
+          <ul>
+            <li>the form class and its field names</li>
+            <li>the URL path the rule matches on</li>
+            <li>the table name that delete actions arrive under</li>
+          </ul>
+          <p>
+            <code>validate()</code> was checking the first one.
+          </p>
+          <p>
+            The second is the dangerous one. If Horizon moves a panel's path, the form class imports cleanly, every field is precisely where the rule says it is, the self-check reports no problems and the rule never matches again. Nothing looks wrong from the inside. The plugin just silently stops recording that panel, and keeps doing so until somebody notices a gap in a log they were not watching closely.
+          </p>
+          <p>
+            The third is the same failure on the delete side. Horizon encodes table actions as <code>&lt;table&gt;__&lt;action&gt;__&lt;id&gt;</code>, so a renamed table means deletes stop being recognised while the create rule for the same resource carries on working perfectly.
+          </p>
+
+          <p>
+            I found that out by writing a comment. Having decided the check deserved to run on its own, I gave it a weekly GitHub Actions job against Horizon master, installed under OpenStack's upper-constraints so a red run would mean my rules had drifted rather than pip having had an interesting morning. Then I sat down to write the header comment describing what the job did not cover, got two lines in and stopped.
+          </p>
+
+          <h3>Reversing the URL instead of pinning it</h3>
+          <p>
+            The fix was to make a rule say where it lives, not only what it looks at. Each one now carries the Horizon URL names it serves:
+          </p>
+
+          <pre>
+"routes": [
+    "horizon:admin:routers:create",
+    "horizon:project:routers:create",
+],
+"url": r"/(admin|project)/routers/create/?$",
+          </pre>
+
+          <p>
+            <code>validate()</code> calls Django's <code>reverse()</code> on each name and checks the rule's pattern still matches the path that comes back. Reversing rather than hard-coding a path is the entire point: the URL name is Horizon's stable handle and the path is the thing upstream is allowed to change. A <code>TABLES</code> entry names the <code>DataTable</code> class its key came from, and the same pass confirms the class still calls itself that.
+          </p>
+          <p>
+            The first run taught me something I had been carrying around as folklore. Of the eleven URL names now recorded, four reverse without a trailing slash:
+          </p>
+
+          <pre>
+horizon:admin:volume_types:create_type   /admin/volume_types/create_type
+horizon:identity:projects:create         /identity/create
+horizon:identity:domains:create          /identity/domains/create
+horizon:identity:groups:create           /identity/groups/create
+          </pre>
+
+          <p>
+            Which is why every pattern ends in <code>/?$</code>, and why <code>project-create</code> matches <code>/identity/create</code> with no panel slug in it at all. That was previously a thing I knew and nothing enforced. Any reasonable tidying pass would have removed it and broken four rules in a way no test could see.
+          </p>
+
+          <h3>A check that cannot fail is decoration</h3>
+          <p>
+            Adding the checks was the easy half. The half that mattered was proving they bite, because a self-check that has never reported anything is indistinguishable from one that cannot. So each failure mode gets a test that stages it deliberately and asserts it comes back:
+          </p>
+
+          <pre>
+- flavor-create: horizon:admin:flavors:nope no longer reverses;
+  the rule cannot fire
+- volume-type-create: horizon:admin:volume_types:create_type is now
+  /admin/volume_types/create_type, which '/admin/volume_types/moved/?$'
+  does not match
+- table roles: ...identity.users.tables:UsersTable now calls itself
+  'users', so deletes there stop being recorded
+          </pre>
+
+          <p>
+            The middle one is the test I would keep if I could only keep one. It leaves the form completely untouched and changes nothing but the path, which is exactly the situation the old check looked at and called healthy.
+          </p>
+
+          <h3>What I took from it</h3>
+          <p>
+            None of this was subtle. I had written a check for the failure I happened to imagine — a renamed field — and then read its green result as a statement about the whole rule. A self-check only covers what you thought of while writing it, and it will go on reporting confidently about everything else.
+          </p>
+          <p>
+            The useful exercise turned out to be boring and mechanical: list every external fact the thing depends on, then count how many of them the check can actually observe. One out of three, in my case, and I only counted because I had to describe the gap in writing.
+          </p>
+          <p>
+            The alternative is to carry it in my head: Astrolabe's rules alongside everything else Horizon is doing. That holds until the week it does not, and it makes every upstream change somebody's unpaid chore. A check that runs on its own schedule costs a morning to write and never has a busy week.
+          </p>
+          <p>
+            Green does not mean correct. It means the things you remembered to look at have not changed.
+          </p>
+
+          <hr style="margin: 3rem 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+
+          <p style="font-size: 1.3rem; font-style: italic; color: rgba(255, 255, 255, 0.7);">
+            <strong>Further reading:</strong><br>
+            <a href="https://github.com/xtmprsqzntwlfb/astrolabe" target="_blank" rel="noopener noreferrer">Astrolabe on GitHub</a><br>
+            <a href="https://docs.openstack.org/horizon/latest/contributor/tutorials/plugin.html" target="_blank" rel="noopener noreferrer">Writing a Horizon plugin</a><br>
+            <a href="https://docs.openstack.org/horizon/latest/configuration/settings.html" target="_blank" rel="noopener noreferrer">Horizon settings reference (ANGULAR_FEATURES)</a><br>
+            <a href="https://docs.djangoproject.com/en/4.2/ref/urlresolvers/#reverse" target="_blank" rel="noopener noreferrer">django.urls.reverse</a><br>
+            <a href="https://docs.opendev.org/opendev/infra-manual/latest/drivers.html" target="_blank" rel="noopener noreferrer">OpenStack upper-constraints and the requirements process</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+
+  <script data-goatcounter="https://xtmprsqzntwlfb.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
