@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Four Opens and a Six-Month Clock: How OpenInfra Works | Pragma &amp; Prose</title>
+  <meta name="description" content="What the OpenInfra Foundation is, how its governance took shape, and how the community handles projects joining, losing a leader, going quiet or being retired. Why the release lands every six months and what AI changed.">
+  <meta name="author" content="xtmprsqzntwlfb">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="mask-icon" href="../favicon.svg" color="#000000">
+  <link rel="alternate icon" type="image/png" href="../favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+</head>
+<body>
+  <header id="header">
+    <a href="../index.html"><img src="../logo.png" alt="Logo" width="146" height="146" loading="eager"></a>
+    <h1><a href="../index.html" style="color: #FFFFFF; text-decoration: none;">Pragma &amp; Prose</a></h1>
+    <ul class="main-menu">
+      <li><a href="../index.html">home</a></li>
+      <li><a href="../index.html#projects">projects</a></li>
+      <li><a href="../index.html#about">about</a></li>
+    </ul>
+  </header>
+
+  <div id="container">
+    <div class="inner">
+      <div id="content">
+        <article class="blog-post">
+          <h2>Four Opens and a Six-Month Clock: How OpenInfra Works</h2>
+          <p class="post-date">
+            <time datetime="2026-10-26">October 26, 2026</time>
+          </p>
+
+          <p>
+            A quick word for anyone outside the OpenStack world. The <a href="https://openinfra.org/" target="_blank" rel="noopener noreferrer">OpenInfra Foundation</a> holds the trademarks, the money and the legal shell for several open source infrastructure projects, OpenStack among them. It does not decide what goes into the software. That is handled by people elected from the contributors, under rules kept in a git repository.
+          </p>
+          <p>
+            The foundation counts <a href="https://openinfra.org/about/" target="_blank" rel="noopener noreferrer">over 110,000 members in 187 countries</a>. A few thousand of them work on OpenStack, shipping a coordinated release twice a year, and nobody has the authority to order anybody else to do anything. This is a summary of how that works. The links carry the detail it leaves out.
+          </p>
+
+          <h3>What OpenInfra is today</h3>
+          <p>
+            The foundation hosts four <a href="https://openinfra.org/projects/" target="_blank" rel="noopener noreferrer">confirmed projects</a>: <strong>OpenStack</strong> for VMs, containers and bare metal, <strong>Kata Containers</strong> for container workloads isolated in lightweight VMs, <strong>StarlingX</strong> for edge infrastructure and <strong>Zuul</strong> for gating changes across many repositories at once. Working groups cover digital sovereignty, AI workloads, computing force networks and migration off proprietary virtualization.
+          </p>
+          <p>
+            Since June 2025 the foundation is a directed fund of the <a href="https://openinfra.org/blog/openinfra-joins-linux-foundation/" target="_blank" rel="noopener noreferrer">Linux Foundation</a>. Back office, legal and staff merged. Technical governance did not: the <a href="https://openinfra.org/legal/charter" target="_blank" rel="noopener noreferrer">Charter</a> leaves each project's governance to that project's own charter.
+          </p>
+          <p>
+            Two power structures sit side by side, deliberately separate. The <a href="https://openinfra.org/about/board/" target="_blank" rel="noopener noreferrer">Governing Board</a> handles money, trademarks and staff. The <a href="https://governance.openstack.org/tc/" target="_blank" rel="noopener noreferrer">Technical Committee</a>, nine directly elected members, handles what the software is. The board cannot merge a patch. The TC cannot spend a dollar.
+          </p>
+
+          <h3>A brief history</h3>
+          <p>
+            The governance took its shape in stages rather than all at once, most of them in response to a concrete problem. The <a href="https://docs.openstack.org/project-team-guide/introduction.html" target="_blank" rel="noopener noreferrer">Project Team Guide</a> records the sequence.
+          </p>
+          <p>
+            <strong>2010.</strong> Rackspace's rewrite of its Cloud Servers code converged with Nova, published by Anso Labs under contract to NASA. The first Design Summit ran in Austin on 13-14 July 2010. Governance was a mix of boards, and PTLs were appointed by Rackspace.
+          </p>
+          <p>
+            <strong>2011.</strong> In March, contributors elected their project leads for the first time.
+          </p>
+          <p>
+            <strong>2012.</strong> The OpenStack Foundation launched in September, splitting authority between a Board of Directors holding budget and trademark and a Technical Committee holding the upstream project. That division still stands.
+          </p>
+          <p>
+            <strong>2013.</strong> The TC changed from every PTL plus five elected members to thirteen directly elected members.
+          </p>
+          <p>
+            <strong>2014.</strong> The integrated release came apart. Projects had to incubate and graduate into one bundle, and the <a href="https://governance.openstack.org/tc/resolutions/20141202-project-structure-reform-spec.html" target="_blank" rel="noopener noreferrer">reform resolution</a> described that structure as a ladder, with a verdict worth quoting:
+          </p>
+          <pre>the "integrated release" is paradoxically too large to be
+effectively integrated, installed or upgraded in one piece,
+and too small to express the diversity of our rich ecosystem.</pre>
+          <p>
+            The replacement, dubbed the big tent, swapped maturity for behaviour: align with the mission, follow the OpenStack way, support Keystone, accept TC oversight. Those four are still the backbone of the <a href="https://governance.openstack.org/tc/reference/new-projects-requirements.html" target="_blank" rel="noopener noreferrer">requirements</a> for a new project today.
+          </p>
+          <p>
+            <strong>2020.</strong> Having taken on Kata Containers, StarlingX and Zuul alongside OpenStack, the OpenStack Foundation announced on 19 October that it would become the Open Infrastructure Foundation, effective 2021. Over the same year the TC shrank from thirteen seats to nine.
+          </p>
+          <p>
+            <strong>2025.</strong> The foundation joined the Linux Foundation as a directed fund.
+          </p>
+
+          <h3>The Four Opens are the constitution</h3>
+          <p>
+            Everything derives from <a href="https://governance.openstack.org/tc/reference/opens.html" target="_blank" rel="noopener noreferrer">four principles</a>.
+          </p>
+          <ul>
+            <li><strong>Open Source.</strong> Apache 2.0, and explicitly: "We do not produce 'open core' software." No enterprise edition, no feature held back for a paid tier.</li>
+            <li><strong>Open Design.</strong> Direction is discussed in public and in advance, at events open to anyone.</li>
+            <li><strong>Open Development.</strong> Public source, public review, gated by tests. Nobody merges their own patch, PTLs included.</li>
+            <li><strong>Open Community.</strong> Lazy consensus, logged meetings, archived mailing lists.</li>
+          </ul>
+
+          <h3>Governance lives in a git repository</h3>
+          <p>
+            The authoritative statement of what OpenStack is lives in <a href="https://opendev.org/openstack/governance/src/branch/master/reference/projects.yaml" target="_blank" rel="noopener noreferrer"><code>reference/projects.yaml</code></a>: every official team, its leadership, its liaisons and every repository it owns. Retired teams move to <a href="https://opendev.org/openstack/governance/src/branch/master/reference/legacy.yaml" target="_blank" rel="noopener noreferrer"><code>legacy.yaml</code></a>. The governance website renders these files. As of October 2026 there are 42 teams, 37 with a PTL and five on distributed leadership.
+          </p>
+          <p>
+            Changing any of it means proposing a patch. Becoming official is a patch, appointing a PTL is a patch, retiring a project is a patch and a TC <a href="https://governance.openstack.org/tc/resolutions/" target="_blank" rel="noopener noreferrer">resolution</a> is a dated document merged into the same repository. Governance changes therefore get the same review, the same visibility and the same right of reply as a bug fix, and no decision exists only in somebody's memory.
+          </p>
+          <p>
+            This is how a community without a management hierarchy coordinates. Not authority, but a single source of truth that anyone can propose a change to and nobody can quietly edit.
+          </p>
+
+          <h3>The life cycle of a project</h3>
+          <p>
+            A project is admitted, led, sometimes marked inactive and occasionally deprecated or retired. Each step has a documented process behind it.
+          </p>
+
+          <h4>Admission</h4>
+          <p>
+            The bar is behavioural rather than technical, and projects are expected to run independently for months first, because intentions are cheap and a commit log is not.
+          </p>
+          <p>
+            Easier entry brought its own problem: projects arriving before they were production ready, with users reading official status as a readiness signal. The answer is a state called <a href="https://governance.openstack.org/tc/reference/emerging-technology-and-inactive-projects.html" target="_blank" rel="noopener noreferrer">Emerging technology</a>. The project is official and visible, labelled as not production ready and has until the third coordinated release after entry to meet the full requirements or be retired.
+          </p>
+          <p>
+            Skyline is the worked example. In June 2024 the TC chair <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/message/VBH4YU7IBY4FXSAZYL4AIB57BTSPQ572/" target="_blank" rel="noopener noreferrer">proposed graduating it</a>, citing consistent releases since Zed and production use reported in the user survey.
+          </p>
+
+          <h4>Leadership gaps</h4>
+          <p>
+            Every cycle the election results carry a section headed <em>Leaderless Projects</em>. For <a href="https://governance.openstack.org/election/results/2026.2/ptl.html" target="_blank" rel="noopener noreferrer">2026.2</a> it lists eight, including Oslo and Requirements, which most of OpenStack depends on. The <a href="https://governance.openstack.org/tc/reference/charter.html" target="_blank" rel="noopener noreferrer">TC charter</a> gives two ways out: appoint a new PTL, or move the team to distributed leadership, in consultation with the outgoing PTL and any interested candidates.
+          </p>
+          <p>
+            <strong>Appoint.</strong> The <a href="https://governance.openstack.org/tc/resolutions/20141128-elections-process-for-leaderless-programs.html" target="_blank" rel="noopener noreferrer">2014 resolution</a> lets the TC appoint a lead "by mutual agreement of the Technical Committee and the proposed appointee". In practice it is a mailing list campaign: in September 2022 eleven projects came out of nominations leaderless, and seven were <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/message/RBMUKA5FPU7SNA2FVLQ4PPZBURAXL34T/" target="_blank" rel="noopener noreferrer">named in a subject line</a> asking for volunteers. This is not an edge case. Each team's entry in <a href="https://opendev.org/openstack/governance/src/branch/master/reference/projects.yaml" target="_blank" rel="noopener noreferrer"><code>projects.yaml</code></a> records the cycles in which its lead was appointed rather than elected, and 25 of the 37 teams with a PTL have at least one.
+          </p>
+          <p>
+            <strong>Distribute.</strong> <a href="https://governance.openstack.org/tc/reference/distributed-project-leadership.html" target="_blank" rel="noopener noreferrer">Distributed Project Leadership</a> replaces the PTL with named liaisons for release, CI health and security, plus a TC member who tracks the team. The insight is that PTL is not one job but several bundled together, and the bundle is what makes it hard to fill. The <a href="https://governance.openstack.org/tc/resolutions/20200803-distributed-project-leadership.html" target="_blank" rel="noopener noreferrer">resolution</a> is honest about the costs: harder to know who to ask, slower consensus and gaps where ownership is vague.
+          </p>
+          <p>
+            <strong>Neither.</strong> If nobody will lead and nobody will liaise, the project heads for the inactive state described below. Trace the 2026.2 list forward and all three outcomes appear. Adjutant, Masakari, Mistral and Skyline were appointed. Oslo and Requirements run distributed. Venus moved to <a href="https://opendev.org/openstack/governance/src/branch/master/reference/legacy.yaml" target="_blank" rel="noopener noreferrer"><code>legacy.yaml</code></a>.
+          </p>
+
+          <h4>Inactivity</h4>
+          <p>
+            Between healthy and retired sits a formal state: inactive, for a team that can no longer review, release or keep CI working. The consequence is specific rather than punitive. Return to active before milestone 2 or the release team proposes no release that cycle. The repository and its history stay.
+          </p>
+          <p>
+            Monasca and Sahara show how that plays out. Both had been marked inactive in the 2024.1 cycle. In April 2024 <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/message/24M3WQXDE2DYN3GWDFHY52FNGNIXN4N3/" target="_blank" rel="noopener noreferrer">Sahara was proposed for retirement</a>, with no maintainer volunteering. Monasca, which had a PTL that cycle, was <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/message/JVQB3SKN25FE7NHUETFYZI6HV432WYYC/" target="_blank" rel="noopener noreferrer">given until milestone 2</a> to meet the published exit criteria. Neither returned to active, and both are in <a href="https://opendev.org/openstack/governance/src/branch/master/reference/legacy.yaml" target="_blank" rel="noopener noreferrer"><code>legacy.yaml</code></a> now.
+          </p>
+
+          <h4>Deprecation and retirement</h4>
+          <p>
+            Not every repository that stops goes all the way. Marking one <a href="https://docs.openstack.org/project-team-guide/repository.html#deprecating-a-repository" target="_blank" rel="noopener noreferrer">deprecated</a> ends development on master while its stable branches keep taking bug fixes. Twenty-two deliverables in <a href="https://opendev.org/openstack/governance/src/branch/master/reference/projects.yaml" target="_blank" rel="noopener noreferrer"><code>projects.yaml</code></a> carried that state in October 2026, among them every Vitrage repository and Ironic's ironic-inspector.
+          </p>
+          <p>
+            Retirement is a <a href="https://docs.openstack.org/project-team-guide/repository.html#retiring-a-repository" target="_blank" rel="noopener noreferrer">nine-step procedure</a>, chained with <code>Depends-On</code> so the patches land in order. Two of the steps reach outside the project being retired. Its references have to come out of Zuul job definitions on every stable branch, because a dangling one breaks CI for unrelated projects, and its published documentation has to be redirected, because a page still serving traffic tells operators the software is still supported.
+          </p>
+          <p>
+            The steps stop at OpenStack's own systems. os-net-config was retired in April 2024, after which its PyPI entry carried on under external maintenance still branded OpenStack, and a <a href="https://governance.openstack.org/tc/resolutions/20251117-handover-os-net-config.html" target="_blank" rel="noopener noreferrer">TC resolution of 17 November 2025</a> settled that handover and set out what future ones must do: announce the change first, and make the shift out of OpenStack governance visible in the package metadata.
+          </p>
+
+          <h3>Why the release cycle is six months</h3>
+          <p>
+            The community has tested a shorter cycle and a longer one.
+          </p>
+          <p>
+            <strong>Three months was tried first.</strong> From the release management team's <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/thread/3YXWYFHUJV6V76K4QXKYBRCIA5A6OIE2/" target="_blank" rel="noopener noreferrer">own history</a>: "OpenStack started with a 3-month release cycle, then switched to 6-month release cycle starting with Diablo." The reason is the shape of a cycle. The run up to the three milestones takes 13 to 18 weeks before anything freezes, then feature freeze gives translators string stability and packagers frozen dependencies, then release candidates run for several weeks. Compress that into twelve weeks and stabilization eats development.
+          </p>
+          <p>
+            <strong>Twelve months was proposed in 2021.</strong> Thierry Carrez <a href="https://lists.openstack.org/archives/list/openstack-discuss@lists.openstack.org/thread/3YXWYFHUJV6V76K4QXKYBRCIA5A6OIE2/" target="_blank" rel="noopener noreferrer">put the case to openstack-discuss</a> with data: the rate of change had fallen by a factor of three between 2015 and 2021 and deployments were getting larger. Fewer concurrent stable branches would also mean less backporting. "OpenStack is becoming much more like a LTS distribution than a web browser."
+          </p>
+          <p>
+            <strong>It was declined for three reasons</strong>, set out in the <a href="https://governance.openstack.org/tc/resolutions/20220210-release-cadence-adjustment.html" target="_blank" rel="noopener noreferrer">resolution that followed</a>. There was no consensus on which slower cadence. Volunteer reality cut against it, since "the community already struggles to find candidates for six month (PTL) and one year (TC) duties" and longer cycles concentrate that work rather than reducing it. And feedback latency: "double-digit months between landing a feature and having it testable and usable in production is too long."
+          </p>
+          <p>
+            <strong>The compromise was SLURP</strong>, for Skip Level Upgrade Release Process. The cycle stays at six months and every other release is designated a SLURP, with upgrades tested between adjacent releases as before and also between consecutive SLURPs. An annual upgrade cadence and a six-month one are both supported. In the <a href="https://releases.openstack.org/" target="_blank" rel="noopener noreferrer">current series</a>, 2026.1 Gazpacho was a SLURP, 2026.2 Hibiscus was not and 2027.1 Indri is one.
+          </p>
+          <p>
+            Supporting the skip costs something, and the resolution is specific about what:
+          </p>
+          <ul>
+            <li>A feature cannot be removed in a release that deployments are allowed to skip, or they would never see the warning. Deprecation and removal both have to land on SLURP releases, which makes the minimum deprecation period longer.</li>
+            <li>Database schemas have to stay upgradeable across the gap, and any data migration in the skipped release cannot be mandatory.</li>
+            <li>Upgrading across a skip can require downtime, because components are only guaranteed to interoperate across one release, not two.</li>
+            <li><a href="https://docs.openstack.org/grenade/latest/" target="_blank" rel="noopener noreferrer">Grenade</a>, the harness that exercises the upgrade process between releases, maintains a skip-level job alongside the normal one.</li>
+          </ul>
+
+          <h3>AI: sovereignty, tooling and regulation</h3>
+          <p>
+            The governance described so far was built before generative AI became part of routine software work. AI tools have since arrived in contributors' editors, AI workloads have become something operators expect a cloud to run and two EU regulations affecting open source have come into force.
+          </p>
+          <p>
+            No new governance body was created for any of it. The relevant documents are a <a href="https://openinfra.org/legal/ai-policy" target="_blank" rel="noopener noreferrer">policy from the Governing Board</a>, the <a href="https://governance.openstack.org/tc/resolutions/20250520-replace-the-cla-with-dco-for-all-contributions.html" target="_blank" rel="noopener noreferrer">sign-off requirement</a> introduced with the DCO and a <a href="https://governance.openstack.org/tc/resolutions/20250317-extend-scope-VMT-cover-all-projects.html" target="_blank" rel="noopener noreferrer">TC resolution</a> extending vulnerability management to every project team.
+          </p>
+
+          <h4>Sovereignty</h4>
+          <p>
+            The foundation defines <a href="https://openinfra.org/digital-sovereignty" target="_blank" rel="noopener noreferrer">digital sovereignty</a> as more than owning your data. Real control also needs the ability to understand and modify the software, which it credits to the Four Opens and to neutral governance. As AI adoption grows it extends the same requirement to the data, models and infrastructure used for training and inference. Neutral governance is not an abstraction here: it is the elected Technical Committee and the rule that no single company holds more than half its seats.
+          </p>
+
+          <h4>Tooling</h4>
+          <p>
+            The Governing Board maintains a <a href="https://openinfra.org/legal/ai-policy" target="_blank" rel="noopener noreferrer">Policy for AI Generated Content</a>. Tools are welcomed and none is mandated. What the policy requires instead is accountability: a human signs off on every contribution, and material AI use is declared in the commit message with an <code>Assisted-By</code> or <code>Generated-By</code> trailer. That sign-off became mandatory on 1 July 2025, when OpenStack <a href="https://governance.openstack.org/tc/resolutions/20250520-replace-the-cla-with-dco-for-all-contributions.html" target="_blank" rel="noopener noreferrer">replaced its CLA with the Developer Certificate of Origin</a>, eleven years after the TC first asked for it. Nova's <a href="https://opendev.org/openstack/nova/src/branch/master/doc/source/contributor/commit-messages.rst" target="_blank" rel="noopener noreferrer">commit message guide</a> goes further and rules out <code>Co-Authored-By</code> for tools: the trailer carries a DCO implication, so applying it to a model misrepresents authorship.
+          </p>
+
+          <h4>Regulation</h4>
+          <p>
+            The <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener noreferrer">AI Act</a>, Regulation (EU) 2024/1689, largely <a href="https://artificialintelligenceact.eu/article/2/" target="_blank" rel="noopener noreferrer">exempts</a> systems released under free and open-source licences. The <a href="https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act" target="_blank" rel="noopener noreferrer">Cyber Resilience Act</a>, Regulation (EU) 2024/2847, applies more directly, <a href="https://digital-strategy.ec.europa.eu/en/policies/cra-open-source" target="_blank" rel="noopener noreferrer">covering</a> software supplied in the course of a commercial activity.
+          </p>
+          <p>
+            For organisations that sustain such software without placing it on the market, the CRA defines a separate role: the open-source software steward. A software foundation fits that description. Stewards must keep a cybersecurity policy and report exploited vulnerabilities from <a href="https://digital-strategy.ec.europa.eu/en/policies/cra-reporting" target="_blank" rel="noopener noreferrer">11 December 2027</a>.
+          </p>
+          <p>
+            OpenStack had already built most of that. In <a href="https://governance.openstack.org/tc/resolutions/20250317-extend-scope-VMT-cover-all-projects.html" target="_blank" rel="noopener noreferrer">March 2025</a> the TC extended the Vulnerability Management Team to every project team and required each to name a security liaison.
+          </p>
+
+          <h3>Why it works this way</h3>
+          <p>
+            The community writes its reasoning down. Alongside the Four Opens the TC maintains fourteen <a href="https://governance.openstack.org/tc/reference/principles.html" target="_blank" rel="noopener noreferrer">Guiding Principles</a> and is blunt about their status: "These principles are not aspirational. Rather, they form the bedrock upon which the OpenStack community and software are built."
+          </p>
+          <p>
+            Four of them account for most of what is above. <em>Contribution Is Our Currency</em> explains why a leaderless team still ships, since "elected leadership exists" but "is not solely responsible for change". <em>Changes in Leadership are Good</em> turns the leaderless list from a symptom into designed rotation: "No one should consider their role as permanent." <em>Participation is Voluntary</em> is why an inactive project gets a deadline rather than a sanction. <em>We all should Always Follow the OpenStack Way</em> is what the governance repository implements, rejecting decisions that "by definition, did not include the community".
+          </p>
+          <p>
+            The rest is practice rather than principle: releases on a date instead of a feature list and explicit middle states between healthy and retired.
+          </p>
+          <p>
+            What OpenStack is, officially, is a file in a git repository, and amending it takes a patch like any other. Fifteen years of work went into making that true, built up cycle by cycle rather than designed in advance. The governance is how a few thousand contributors at competing companies keep building the software together.
+          </p>
+
+          <h3>Links</h3>
+          <ul>
+            <li><a href="https://governance.openstack.org/tc/reference/opens.html" target="_blank" rel="noopener noreferrer">The Four Opens</a> and the <a href="https://governance.openstack.org/tc/reference/principles.html" target="_blank" rel="noopener noreferrer">Guiding Principles</a></li>
+            <li><a href="https://governance.openstack.org/tc/reference/charter.html" target="_blank" rel="noopener noreferrer">OpenStack Technical Committee Charter</a></li>
+            <li><a href="https://opendev.org/openstack/governance/src/branch/master/reference/projects.yaml" target="_blank" rel="noopener noreferrer">reference/projects.yaml</a> and <a href="https://opendev.org/openstack/governance/src/branch/master/reference/legacy.yaml" target="_blank" rel="noopener noreferrer">reference/legacy.yaml</a></li>
+            <li><a href="https://governance.openstack.org/tc/resolutions/" target="_blank" rel="noopener noreferrer">TC resolutions, 2013 to now</a></li>
+            <li><a href="https://governance.openstack.org/tc/reference/new-projects-requirements.html" target="_blank" rel="noopener noreferrer">Requirements for new projects</a> and <a href="https://governance.openstack.org/tc/reference/emerging-technology-and-inactive-projects.html" target="_blank" rel="noopener noreferrer">emerging and inactive projects</a></li>
+            <li><a href="https://governance.openstack.org/tc/reference/distributed-project-leadership.html" target="_blank" rel="noopener noreferrer">Distributed Project Leadership</a></li>
+            <li><a href="https://governance.openstack.org/tc/resolutions/20141202-project-structure-reform-spec.html" target="_blank" rel="noopener noreferrer">Project structure reform, 2014</a> and <a href="https://governance.openstack.org/tc/resolutions/20220210-release-cadence-adjustment.html" target="_blank" rel="noopener noreferrer">release cadence adjustment, 2022</a></li>
+            <li>Project Team Guide: <a href="https://docs.openstack.org/project-team-guide/introduction.html" target="_blank" rel="noopener noreferrer">history</a>, <a href="https://docs.openstack.org/project-team-guide/ptl.html" target="_blank" rel="noopener noreferrer">becoming a PTL</a>, <a href="https://docs.openstack.org/project-team-guide/repository.html" target="_blank" rel="noopener noreferrer">retiring a repository</a></li>
+            <li><a href="https://releases.openstack.org/" target="_blank" rel="noopener noreferrer">Release series and schedules</a></li>
+            <li><a href="https://openinfra.org/legal/ai-policy" target="_blank" rel="noopener noreferrer">OpenInfra Policy for AI Generated Content</a> and the <a href="https://governance.openstack.org/tc/resolutions/20250520-replace-the-cla-with-dco-for-all-contributions.html" target="_blank" rel="noopener noreferrer">CLA to DCO transition</a></li>
+            <li><a href="https://openinfra.org/digital-sovereignty" target="_blank" rel="noopener noreferrer">Digital sovereignty with OpenInfra</a> and the <a href="https://www.openstack.org/openstack-for-ai-white-paper" target="_blank" rel="noopener noreferrer">Open Infrastructure for AI whitepaper</a></li>
+            <li>European Commission: the <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener noreferrer">AI Act</a> and its <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/timeline/timeline-implementation-eu-ai-act" target="_blank" rel="noopener noreferrer">implementation timeline</a>, the <a href="https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act" target="_blank" rel="noopener noreferrer">Cyber Resilience Act</a> and <a href="https://digital-strategy.ec.europa.eu/en/policies/cra-open-source" target="_blank" rel="noopener noreferrer">how it treats open source</a></li>
+          </ul>
+
+        
+</article>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by dark magic and procrastination
+  </footer>
+
+  <script data-goatcounter="https://xtmprsqzntwlfb.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
